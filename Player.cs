@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
+//using System;
 
 namespace PASS3
 {
@@ -36,9 +36,13 @@ namespace PASS3
 
         float jumpSpeed = 6f;
 
-        int onGroundY;
+        public static int onGroundY;
 
         public static int score;
+
+        public static int highScore;
+
+        public static bool newHighScore;
 
         public Player(int newHealth, int newScore)
         {
