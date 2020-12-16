@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
+//using System;
 
 namespace PASS3
 {
@@ -28,8 +28,8 @@ namespace PASS3
         float throwSpeed = 0.8f;
         float xProjSpeed = 0f;
         float yProjSpeed = 0f;
-        //collision: if(. . . && Projectile.projTimer>0)
-        //Projectile.projTimer
+        //collision: if(Projectile.projTimer>0 && . . .)
+        //Projectile.projTimer = 0;
         static public float projTimer = 0f;
 
         float gravity = 9.8f / 60f;
