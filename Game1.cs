@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -37,7 +37,7 @@ namespace PASS3
 
         const int OBSTACLE_SPEED = 13;
 
-        const float DELTA_TIME = 16.6666f;
+        const float DELTA_TIME = 16.66666f;
 
         int timer = 1500;
 
@@ -52,6 +52,12 @@ namespace PASS3
 
         Vector2 pointerLocation;
         Texture2D pointerTexture;
+
+        Texture2D healthTexture;
+        Rectangle healthRectangle;
+
+        Texture2D spawnTexture;
+        Rectangle spawnRectangle;
 
         SpriteFont Arial;
         SpriteFont BigArial;
@@ -96,7 +102,7 @@ namespace PASS3
 
         protected override void LoadContent()
         {
-            //Artwork by me in google drawings
+            //Artwork by me in google drawings (except red and orange are from google)
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playTexture = Content.Load<Texture2D>("play");
             playLocation = new Vector2(_graphics.PreferredBackBufferWidth / 4 - playTexture.Width / 2, _graphics.PreferredBackBufferHeight / 2 - playTexture.Height);
@@ -131,6 +137,12 @@ namespace PASS3
             lowData = new Color[low.Width * low.Height];
             low.GetData(lowData);
 
+            healthTexture = Content.Load<Texture2D>("red");
+            healthRectangle = new Rectangle(375, 135, player.health * 100, 20);
+
+            spawnTexture = Content.Load<Texture2D>("orange");
+            spawnRectangle = new Rectangle(375, 200, timer / 5, 20);
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -160,6 +172,7 @@ namespace PASS3
                     //Get user input to resume the game
                     break;
                 case ENDGAME:
+                    UpdateEndgame(gameTime);
                     //Wait for final input based on end of game options (end, restart, etc.)
                     break;
             }
@@ -193,6 +206,7 @@ namespace PASS3
                     //Draw the pause screen, this may include the full game drawing behind
                     break;
                 case ENDGAME:
+                    DrawEndgame(gameTime);
                     //Draw the final feedback and prompt for available options (exit,restart, etc.)
                     break;
             }
@@ -419,6 +433,7 @@ namespace PASS3
                 lowRectangles.RemoveAt(i);
                 lowRectangles.Insert(i, rect);
                 rect.Y += 45;
+                rect.X += 90;
                 if (lows[i].X <= 0)
                 {
                     lows.RemoveAt(i);
@@ -465,7 +480,43 @@ namespace PASS3
             {
                 gameState = ENDGAME;
                 player.health = 3;
+                Projectile.projTimer = 0;
+                Player.currentPlayerOrientation = Player.STANDING;
+                player.position = new Vector2(100, Player.onGroundY);
+
+                while (walls.Count > 0)
+                {
+                    walls.RemoveAt(0);
+                }
+                while (wallRectangles.Count > 0)
+                {
+                    wallRectangles.RemoveAt(0);
+                }
+                while (highs.Count > 0)
+                {
+                    highs.RemoveAt(0);
+                }
+                while (highRectangles.Count > 0)
+                {
+                    highRectangles.RemoveAt(0);
+                }
+                while (lows.Count > 0)
+                {
+                    lows.RemoveAt(0);
+                }
+                while (lowRectangles.Count > 0)
+                {
+                    lowRectangles.RemoveAt(0);
+                }
             }
+            if (Player.score > Player.highScore)
+            {
+                Player.highScore = Player.score;
+                Player.newHighScore = true;
+            }
+            
+            healthRectangle.Width = player.health * 100;
+            spawnRectangle.Width = timer / 5;
         }
         protected void DrawGameplay(GameTime gameTime)
         {
@@ -487,7 +538,34 @@ namespace PASS3
             {
                 _spriteBatch.Draw(low, lows[i], Color.Orange);
             }
+            _spriteBatch.DrawString(Arial, "Score: " + Player.score, new Vector2(0, 0), Color.Cyan);
+            _spriteBatch.DrawString(Arial, "High Score: " + Player.highScore, new Vector2(0, 60), Color.White);
+            _spriteBatch.DrawString(Arial, "Health Points: " + player.health + "/3", new Vector2(0, 120), Color.White);
+            _spriteBatch.DrawString(Arial, "Spawn Timer: ", new Vector2(0, 180), Color.White);
+            _spriteBatch.Draw(spawnTexture, spawnRectangle, Color.White);
+            _spriteBatch.Draw(healthTexture, healthRectangle, Color.White);
 
+            _spriteBatch.End();
+        }
+        protected void UpdateEndgame(GameTime gameTime)
+        {
+            Keyboard.GetState();
+            if (Keyboard.HasBeenPressed(Keys.Enter))
+            {
+                gameState = MENU;
+                Player.score = 0;
+                Player.newHighScore = false;
+            }
+        }
+        protected void DrawEndgame(GameTime gameTime)
+        {
+            _spriteBatch.Begin();
+            if (Player.newHighScore)
+            {
+                _spriteBatch.DrawString(Arial, "Congratulations! New High Score!", new Vector2(_graphics.PreferredBackBufferWidth/2 - 350, _graphics.PreferredBackBufferHeight/1.2f), Color.Yellow);
+            }
+            _spriteBatch.DrawString(Arial, "Press <Enter> to return to the Menu", new Vector2(_graphics.PreferredBackBufferWidth / 2 - 350, _graphics.PreferredBackBufferHeight / 2 + 100), Color.Green);
+            _spriteBatch.DrawString(Arial, "Final score: " + Player.score, new Vector2(_graphics.PreferredBackBufferWidth / 2 - 350, _graphics.PreferredBackBufferHeight / 2), Color.White);
             _spriteBatch.End();
         }
     }
