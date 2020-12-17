@@ -540,8 +540,8 @@ namespace PASS3
             }
             _spriteBatch.DrawString(Arial, "Score: " + Player.score, new Vector2(0, 0), Color.Cyan);
             _spriteBatch.DrawString(Arial, "High Score: " + Player.highScore, new Vector2(0, 60), Color.White);
-            _spriteBatch.DrawString(Arial, "Health Points: " + player.health + "/3", new Vector2(0, 120), Color.White);
-            _spriteBatch.DrawString(Arial, "Spawn Timer: ", new Vector2(0, 180), Color.White);
+            _spriteBatch.DrawString(Arial, "Health Points: " + player.health + "/3", new Vector2(0, 120), Color.Red);
+            _spriteBatch.DrawString(Arial, "Spawn Timer: ", new Vector2(0, 180), Color.Orange);
             _spriteBatch.Draw(spawnTexture, spawnRectangle, Color.White);
             _spriteBatch.Draw(healthTexture, healthRectangle, Color.White);
 
